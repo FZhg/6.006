@@ -1,0 +1,193 @@
+\documentclass[12pt]{article}%
+\usepackage{amsfonts}
+\usepackage{fancyhdr}
+\usepackage{comment}
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2.2cm, right=2.2cm]%
+{geometry}
+\usepackage{amsmath}
+\usepackage{changepage}
+\usepackage{amssymb}
+\usepackage{graphicx}%
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\setcounter{MaxMatrixCols}{30}
+\newtheorem{theorem}{Theorem}
+\newtheorem{acknowledgement}[theorem]{Acknowledgement}
+\newtheorem{axiom}{Axiom}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{conclusion}[theorem]{Conclusion}
+\newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{problem}[theorem]{Problem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{solution}[theorem]{Solution}
+\newtheorem{summary}[theorem]{Summary}
+\newenvironment{proof}[1][Proof]{\textbf{#1.} }{\ \rule{0.5em}{0.5em}}
+
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\runningTime}[1]{$O(#1)$}
+
+\begin{document}
+
+\title{Assignment 3, 6.006, Introduction to Algorithms}
+\author{Bryan Zhang}
+\date{\today}
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                Problem 1 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Problem 3-1. Range Queries}
+
+\subsection{a}
+\textbf{Anwsers: 4} \par
+The range Queries requires that the data has sub-linear running time for inserting a value and getting minimum and maximum. \par
+Thus \textbf{Min-heap} and \textbf{Max-heap} is not suitable because they can only return one extreme of the ranging ends in constant time but can not return the other one without futhur enhancement. \par
+\textbf{Binary Search Tree} does all operation in \runningTime{h} time, in which h is height of the search tree.But We don't know the BST is balanced or not. h is between $\log(n)$ and n. So BST is not working here. \par
+\textbf{AVL trees} is a nearly balanced BST. So it works.  \par
+\textbf{B-trees} insert at \runningTime{\log(n)}. But the every node may contains more than one key. Thus is not suitable for range queries.
+
+\subsection{b}
+\textbf{Answer: 3}
+
+\subsection{c}
+\textbf{Answer: 3}
+
+\subsection{d}
+\textbf{Answer: 3}
+
+\subsection{e}
+\textbf{Answer: 6} \par
+The " + 1" is to compensate for the l key.  \par
+
+\subsection{f}
+\textbf{Answer: 5} \par
+
+\subsection{g}
+\textbf{Answer: 6} \par
+
+\subsection{h}
+\textbf{Answer: 5} \par
+
+\subsection{i}
+\textbf{Answer: 4} \par
+Choice 1, 2, 3, 6 are doing nothing to find out the rank of the node. And the rank of the node can not be given its subtree and its property only. The number of nodes in the subtree, or the subtree size, can be give the sum of subtree sizes of the node's children and plus itself.We can use compute the rank. \par
+This is the pseudo-code for the Rank():
+\newline
+\newline
+
+  \begin{algorithm}
+   \caption{Rank()}
+    \begin{algorithmic}[1]
+      	\Function{Rank}{$tree, k$}\Comment{Where tree - the AVL tree, k - the key to find its rank}
+
+	        \State $rank = 0$
+	        \State $node = tree.root$ \Comment{start from the root to find k}
+	        \While{$node \ne NIL$}
+	        	\If {$k < node.key$}
+	        		\State $node = node.left$    \Comment{thus rank is not updated}
+	        	\Else
+	        		\If {$ node.left \ne NIL$}
+	        			\State $rank = rank + 1 + node.left.\gamma$
+	        		\Else 
+	        			\State  rank = rank + 1 
+	        		\EndIf
+	        		\If {$ node.key == k$}
+	        			\State $\textbf{return} $ rank
+	        		\Else 
+	        			\State $node = node.right$
+	        		\EndIf
+	        	\EndIf
+	        \EndWhile
+	        \State $\textbf{return} $ rank
+	    \EndFunction
+    \end{algorithmic}
+   \end{algorithm}
+
+\subsection{j}
+\textbf{Answer: 3} \par
+The number to store is maximum  N. In bits, $\log(N)$.
+
+\subsection{k}
+\textbf{Answer: 1} \par
+No children for $N_4$.
+
+\subsection{l}
+$N_3.\gamma = 3$.
+
+\subsection{m}
+\textbf{Answer: 4} \par
+$N_2.\gamma = 6$.
+
+\subsection{n}
+\textbf{Answer: 4} \par
+$N_1.\gamma = 10$.
+
+\subsection{o}
+\textbf{Answer: 3, 4, 5} \par
+We only need to modify \textbf{ROTATE-LEFT}, \textbf{ROTATE-RIGHT}, \textbf{REBALANCE}, all of which call the update\_height function.
+
+\subsection{p}
+\textbf{Answer: 3} \par
+Since the $ Rank(tree, k)$ algorithm  and find method of AVL tree run at \runningTime{\log(n)} time, the count algorithm also runs at \runningTime{\log(n)}. \par
+The Count algorithm is below:
+
+  \begin{algorithm}
+   \caption{Count()}
+    \begin{algorithmic}[1]
+      	\Function{Count}{$tree, l, h$}
+      		\If {$ tree.find(l) == 0$} 
+      			\State \textbf{return} Rank(tree, h) - Rank(tree, l)
+      		\Else
+      			\State \textbf{return} Rank(tree, h) - Rank(tree, l) + 1
+      		\EndIf
+	    \EndFunction
+    \end{algorithmic}
+\end{algorithm}
+
+\subsection{q}
+\textbf{Answer: 2} \par
+We can see the node is always trying to get closer to the lower bound. Once the node hit the range, it is returned. So it will be the \textbf{lowest common ancestor} .
+
+\subsection{r}
+\textbf{Answer: 3} \par
+The worst case is that the l and h is two neighbor leaves and their common ancestors is just one layer above them. So the running time is \runningTime{\log(n) -1}, which equals \runningTime{\log(n)}.
+
+\subsection{s}
+\textbf{Answer: 8} \textcolor{red}{I chose the 6 incorrectly.}
+Let V be number of nodes that the NODE-LIST algorithm visits. So its running time is \runningTime{V}. Let X is the number of nodes visited bu t not output by the LIST algorithm. Since $V = L + X$,  our goal becomes to prove X = \runningTime{h}.
+
+Our focus is the nodes visited but not in range [l, h]. But We can run through NODE-LIST to find out where they and nodes in the range [l, h] are. \par
+The first node the program visits is the LCA. So the search goes into LCA left subtree and right subtree. \par
+In the left subtree, all keys < LCA.key < h, since h is in the right subtree of LCA. In this case, We only need to care about the lower bound.
+If the key of the node < l, then line 5 will prune the left subtree of the node, and going to right subtree of the node. In this case, the algorithm just follow a path to l. Even if l is not in the tree, the path is going to the nearest node that are greater or equal to l. \par
+In the right subtree of the LCA, we can have the same result. Thus we have proved that X is smaller than but at the scale of  the height of the tree. Since the BST is an AVL, The total running time is \runningTime{L + \log(N)}.
+
+\subsection{s}
+\textbf{Answer: 8} \par
+The line 2 takes \runningTime{\log(N)} and line 3 takes \runningTime{L + \log(N)}.
+
+\subsection{u}
+\textbf{Solution:} We will prove LCA is correct by two stage: l and h is in the subtree of the every node LCA visits and the returned node is LCA. LCA is defined as the root of the smallest subtree that contains l and h. If l and/or h is not in the tree, we will augment the tree with imaginary nodes created by inserting l and h into the tree but not re-balancing the tree. \par
+
+\textbf{LCA maintains the invariant that l and h belong to the subtree that is rooted at the node.} LCA starts at the root of the tree. So the invariant is true at the beginning. Because the loop will continues under  two conditions: either node.key < l or node.key > h.If node.key < l , then l, h must be located in the right subtree of the node, which keep the invariant by line 6. In the same reason, the invariant is also kept in line 3 if the node.key > h.
+
+\textbf{LCA returns node that is the root of the smallest subtree that contains l and h.} We prove this point by contradiction.
+If r is node returned by LCA and c is the root of the smallest subtree containing l and h.We assume $c \ne r$. l and h must be in the subtree of the node r. Since $c \ne r$, then c must be in the subtree of the node r too. If c is in the left subtree of r, then by BST invariant, l and h < r.key. If this is the case, r will not be returned. Similarly, when c is in the right subtree of node r, r will also not be returned.
+This contradicts with our assumption that r is the node returned by LCA. q.e.d.
+\end{document}
